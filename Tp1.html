@@ -1,0 +1,33 @@
+﻿<!-- HTML source code
+     par Francis cote et daren-ken st-laurent
+-->
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Tp1 Daren-ken St-laurent et Francis Coté</title>
+    <link href="Css/editeur.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="JavaScript/Editeur.js"></script><!--//Algorithme propre a cette page html-->
+    <script type="text/javascript" src="JavaScript/clavier.js"></script><!--//Algorithme touchant au clavier-->
+    <script type="text/javascript" src="JavaScript/algos.js"></script><!--//Algorithme generaux utiliser-->
+</head>
+<body class="prog" onload="placerCurseurDebut()">
+    <div>
+        <h1>Formateur de texte</h1>
+        <div id="Editeur" class="preformatted"><span class="Numerote" /></div><!--charge le documents avec la premiere ligne deja presente-->
+        <br />
+        <div>
+            <table class="compteur">
+                <tr>
+                    <td>Mots :<span id="Mots">0</span></td>
+                    <td>Ligne : <span id="Ligne">0</span></td>
+                    <td>Colonne :<span id="Colonne"> 0</span></td>
+                    <td>Caractères : <span id="Char">0</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
