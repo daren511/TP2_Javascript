@@ -4,12 +4,12 @@ function keyWord(mot) {
     var tableau = ["break", "case", "catch", "continue", "debugger", "default", "delete", "do",
        "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch",
        "this", "throw", "try", "typeof", "var", "void", "while", "with"];
-    for (var i = 0; i < tableau.length; i++) {
-        if (mot == tableau[i]) {
-            return true;
-        }
+    if (trouverDans(mot, tableau) != tableau.length) {
+        return true;
     }
-    return false;
+    else {
+        return false;
+    }
 }
 
 function trouverDans(val, tab) {
@@ -39,6 +39,9 @@ function retirerChar(char, mot) {
     return mot;
 }
 
+//Cette fonction formate le texte et elle compte aussi le nombre de mots puisque cette fonction parcours
+//le tableau en entier il nous est pas neccesaire de reparcourir le tableau, nous sauvons donc du temps
+
 function formater(s) {
     Compteur.getInstance().reset();
     var temp = "";
@@ -60,8 +63,7 @@ function formater(s) {
             result += temp;
         }
     }
-    document.getElementById("Mots").innerHTML = Compteur.getInstance().getMot();
-    return result;
+    return new Array(result,Compteur.getInstance().getMot());
 }
 
 function isSpace(c) {
@@ -168,22 +170,6 @@ var Curseur = (function () {
     };
 })();
 
-function retirerChar(char, mot) {
-    for (var i = 0; i < mot.length; ++i) {
-        if (mot[i] == char) {
-            if (i == 0) {
-                mot = mot.substring(i + 1, mot.length);
-            }
-            else if (i == mot.length - 1) {
-                mot = mot.substring(0, i);
-            }
-            else {
-                mot = mot.substring(0, i) + mot.substring(i + 1, mot.length);
-            }
-        }
-    }
-    return mot;
-}
 
 function ajoutstring(s, string, position) {
 

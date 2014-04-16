@@ -78,7 +78,7 @@ function placerCurseurDebut() {
 }
 function compterLignesEtColonnes(tab) {
     document.getElementById("Ligne").innerHTML = tab.length; // Compteur de lignes
-    document.getElementById("Colonne").innerHTML = trouverLignePlusGrosse(tab); // Compteur de colonnes+
+    document.getElementById("Colonne").innerHTML = trouverLignePlusGrosse(tab); // Compteur de colonnes
 }
 function lignifier(s) {
     var res = "";
