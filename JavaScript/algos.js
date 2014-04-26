@@ -228,20 +228,26 @@ function TrouverNouvellePos(s,direction) {
     var posLigne = position.Ligne;
     var posTab = position.Colonne;
 
-    if (direction == 'h') {
-
-        if (posTab != 0) {
-            pos = CalculerNouvellePos(tab, posTab - 1, posLigne);
-        }
-    }
-    else if (direction == 'b') {
-        if (posTab != tab.length - 1) {// si pas sur la derniere ligne 
-            pos = CalculerNouvellePos(tab, posTab + 1, posLigne);
-            pos--; // on retire le curseur qui a ete calculer
-        }
-    }
-    else {
-        throw "Direction Invalide";
+    switch (direction) {
+        case 'h':
+            if (posTab != 0) {
+                pos = CalculerNouvellePos(tab, posTab - 1, posLigne);
+            }
+            break;
+        case 'b':
+            if (posTab != tab.length - 1) {// si pas sur la derniere ligne 
+                pos = CalculerNouvellePos(tab, posTab + 1, posLigne);
+                pos--; // on retire le curseur qui a ete calculer
+            }
+            break;
+        case 'd':
+            if (posTab != 0) {
+                pos = CalculerNouvellePos(tab, posTab, 0);
+            }
+            break;
+        case 'f':
+                pos = CalculerNouvellePos(tab, posTab, tab[posTab].length-1)
+            break;
     }
 
     return pos;

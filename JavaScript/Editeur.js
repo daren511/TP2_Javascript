@@ -43,6 +43,12 @@ function lireUneToucheSpecial(event) {
                 decrementeChar(); // Compteur de char --
             }
             break;
+        case 36://home
+            Curseur.getInstance().haut(TrouverNouvellePos(contenu.textContent, 'd'));
+            break;
+        case 35://end
+            Curseur.getInstance().bas(TrouverNouvellePos(contenu.textContent, 'f'));
+            break;
     }
     resultatFormatage = formater(ajouterCurseur(chaineSansCurseur));
     contenu.innerHTML = lignifier(resultatFormatage.Texte);
