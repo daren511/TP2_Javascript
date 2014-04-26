@@ -51,7 +51,7 @@ function lireUneToucheSpecial(event) {
             break;
     }
     resultatFormatage = formater(ajouterCurseur(chaineSansCurseur));
-    contenu.innerHTML = lignifier(resultatFormatage.Texte);
+    contenu.innerHTML = spannifierCurseur(lignifier(resultatFormatage.Texte));
     if(resultatFormatage != null)
         document.getElementById("Mots").innerHTML = resultatFormatage.Mots;
 }
@@ -66,10 +66,16 @@ function lireUneTouche(event) {
         chaineSansCurseur = ajoutstring(chaineSansCurseur, String.fromCharCode(event.which), curPosition)//ajout de la touche a la chaine
         compteurChar(contenu.textContent); // Compteur de char ++
         Curseur.getInstance().droite();
-        contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur)).Texte);
+        contenu.innerHTML = spannifierCurseur(lignifier(formater(ajouterCurseur(chaineSansCurseur)).Texte));
     }
 }
 document.addEventListener('keypress', lireUneTouche);
+
+function spannifierCurseur(s) {
+    var curseur = Curseur.getInstance().getCaractere();
+    s = s.replace(curseur, "<span class='Curseur'>" + curseur + "</span>");
+    return s;
+}
 
 function compteurChar(contenu) {
     document.getElementById("Char").innerHTML = contenu.length;

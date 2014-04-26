@@ -188,15 +188,21 @@ function ajouterCurseur(s) {
     var avant = s.substring(0, posCurseur);
     var apres = s.substring(posCurseur, s.length);
 
-    return avant + "<span class='Curseur'>" + Curseur.getInstance().getCaractere() + "</span>" + apres;
+    return avant +/* "<span class='Curseur'>" + */Curseur.getInstance().getCaractere() /*+ "</span>" */+ apres;
 }
 
 function trouverLignePlusGrosse(tab) {
     var plusGrosse = 0;
-
+    var curseur = Curseur.getInstance().getCaractere();
     for (var i = 0; i < tab.length; ++i) {
-        if (plusGrosse < tab[i].length)
-            plusGrosse = tab[i].length;
+        if (plusGrosse < tab[i].length) {
+            if (tab[i].search(curseur) != -1) {
+                plusGrosse = tab[i].length-1;
+            }
+            else {
+                plusGrosse = tab[i].length;
+            }
+        }
     }
     return plusGrosse;
 
