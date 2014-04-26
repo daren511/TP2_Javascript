@@ -9,13 +9,20 @@ div.preformatted {
     counter-reset: line;
 }
 
+.Curseur{
+    color:red;
+}
+
+.keyword{
+    color:blue;
+}
 
 .Numerote {
     height: 10px;
     color: black;
 }
 
-.preformatted span:before {
+.preformatted span.Numerote:before {
     color: red;
     content: counter(line);
     border-right: solid;

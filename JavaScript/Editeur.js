@@ -2,6 +2,7 @@ function lireUneToucheSpecial(event) {
     var contenu = document.getElementById("Editeur");
     var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent);
     var posCur = Curseur.getInstance().getPosition();
+    var resultatFormatage = null;
     switch (event.which) {
         case 8://Backspace
             event.preventDefault();
@@ -9,47 +10,44 @@ function lireUneToucheSpecial(event) {
                 chaineSansCurseur = retirerLettreAvant(chaineSansCurseur, posCur); // Retire lettre
                 decrementeChar(); // Décrémente le nombre de char à l'effacement
                 Curseur.getInstance().gauche();
-                contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur)));
             }
             break;
         case 13://enter
             chaineSansCurseur = ajoutstring(chaineSansCurseur, "\n", posCur);
             compteurChar(contenu.textContent + 1);
             Curseur.getInstance().droite();
-            contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur)));
             break;
         case 37: // gauche
             if (posCur > 0 && contenu.textContent.length > 0) {
                 Curseur.getInstance().gauche();
-                contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur))); // Mettre le curseur à gauche de la position précédente
             }
             break;
         case 39: //droite
             if (posCur < contenu.textContent.length - 1 && contenu.textContent.length > 0) {
                 Curseur.getInstance().droite();
-                contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur))); // Mettre le curseur à droite de la position précédente
             }
             break;
         case 40://down
             if (posCur < contenu.textContent.length) {
-                Curseur.getInstance().bas(TrouverPosCurseur(contenu.textContent, 'b'));
-                contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur))); // Mettre le curseur en bas de la position précédente
+                Curseur.getInstance().bas(TrouverNouvellePos(contenu.textContent, 'b')); // Mettre le curseur en bas de la position précédente
             }
             break
         case 38://up
             if (posCur > 0) {
-                Curseur.getInstance().haut(TrouverPosCurseur(contenu.textContent, 'h'));
-                contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur))); // Mettre le curseur en haut de la position précédente
+                Curseur.getInstance().haut(TrouverNouvellePos(contenu.textContent, 'h'));
             }
             break;
         case 46://delete
             if (posCur < chaineSansCurseur.length) {
                 chaineSansCurseur = retirerLettreApres(chaineSansCurseur, posCur); // Retire la lettre a droite du curseur
                 decrementeChar(); // Compteur de char --
-                contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur)));
             }
             break;
     }
+    resultatFormatage = formater(ajouterCurseur(chaineSansCurseur));
+    contenu.innerHTML = lignifier(resultatFormatage.Texte);
+    if(resultatFormatage != null)
+        document.getElementById("Mots").innerHTML = resultatFormatage.Mots;
 }
 
 document.addEventListener('keydown', lireUneToucheSpecial);
@@ -62,7 +60,7 @@ function lireUneTouche(event) {
         chaineSansCurseur = ajoutstring(chaineSansCurseur, String.fromCharCode(event.which), curPosition)//ajout de la touche a la chaine
         compteurChar(contenu.textContent); // Compteur de char ++
         Curseur.getInstance().droite();
-        contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur)));
+        contenu.innerHTML = lignifier(formater(ajouterCurseur(chaineSansCurseur)).Texte);
     }
 }
 document.addEventListener('keypress', lireUneTouche);
@@ -74,7 +72,7 @@ function decrementeChar() {
     document.getElementById("Char").innerHTML = document.getElementById("Char").textContent - 1;
 }
 function placerCurseurDebut() {
-    document.getElementById("Editeur").innerHTML += Curseur.getInstance().getCaractere();
+    document.getElementById("Editeur").innerHTML += "<span class='Curseur'>" + Curseur.getInstance().getCaractere() + "</span>";
 }
 function compterLignesEtColonnes(tab) {
     document.getElementById("Ligne").innerHTML = tab.length; // Compteur de lignes
