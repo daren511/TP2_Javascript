@@ -102,3 +102,36 @@ function lignifier(s) {
     res += "<span class='Numerote' >" + tab[tab.length - 1] + "</span>";
     return res;
 }
+
+function obtenirTexte(){
+    var s = document.getElementById("Editeur").textContent;
+    var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(),s);
+    return chaineSansCurseur;
+}
+
+function minifier() {
+    var txt = obtenirTexte();
+    var rq = "http://localhost:8888/minify?input=" +
+            btoa(unescape(encodeURIComponent(txt)));
+    $.ajax({
+        url: rq,
+        type: "post",
+        contentType: "text/plain",
+        crossDomain: true,
+        header: {
+            "Access-Control-Allow-Origin": null
+        },
+        xhrFields: {
+            witCredentials: false
+        },
+        success: function (s) {
+            var resultat = decodeURIComponent(escape(atob(s)));
+            document.getElementById("minificateur").value = resultat;
+            // utiliser résultat
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            alert("Zut! " + JSON.stringify(jqXHR) +
+                  textStatus + " ; " + JSON.stringify(errorThrown));
+        }
+    });
+}

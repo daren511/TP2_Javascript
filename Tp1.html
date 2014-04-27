@@ -6,12 +6,15 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Tp1 Daren-ken St-laurent et Francis Coté</title>
+    <title>Tp 2 Daren-ken St-laurent et Francis Coté</title>
     <link href="Css/editeur.css" rel="stylesheet" type="text/css" />
 
     <script type="text/javascript" src="JavaScript/Editeur.js"></script><!--//Algorithme propre a cette page html-->
     <script type="text/javascript" src="JavaScript/clavier.js"></script><!--//Algorithme touchant au clavier-->
     <script type="text/javascript" src="JavaScript/algos.js"></script><!--//Algorithme generaux utiliser-->
+    <script type="text/javascript" src="JavaScript/jquery-1.11.0.js"></script>
+    <script type="text/javascript" src="JavaScript/index.js"></script>
+    <script type="text/javascript" src="JavaScript/relais.js"></script>
 </head>
 <body class="prog" onload="placerCurseurDebut()">
     <div>
@@ -28,6 +31,9 @@
                 </tr>
             </table>
         </div>
+        <br />
+        <input id="minificateur"></input>
+        <button onclick="minifier()">Minifier</button>
     </div>
 </body>
 </html>
