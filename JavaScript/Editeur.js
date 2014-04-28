@@ -13,26 +13,31 @@ function lireUneToucheSpecial(event) {
             }
             break;
         case 13://enter
+            event.preventDefault();
             chaineSansCurseur = ajoutstring(chaineSansCurseur, "\n", posCur);
             compteurChar(contenu.textContent + 1);
             Curseur.getInstance().droite();
             break;
         case 37: // gauche
+            event.preventDefault();
             if (posCur > 0 && contenu.textContent.length > 0) {
                 Curseur.getInstance().gauche();
             }
             break;
         case 39: //droite
+            event.preventDefault();
             if (posCur < contenu.textContent.length - 1 && contenu.textContent.length > 0) {
                 Curseur.getInstance().droite();
             }
             break;
         case 40://down
+            event.preventDefault();
             if (posCur < contenu.textContent.length) {
                 Curseur.getInstance().bas(TrouverNouvellePos(contenu.textContent, 'b')); // Mettre le curseur en bas de la position précédente
             }
             break
         case 38://up
+            event.preventDefault();
             if (posCur > 0) {
                 Curseur.getInstance().haut(TrouverNouvellePos(contenu.textContent, 'h'));
             }
@@ -50,6 +55,7 @@ function lireUneToucheSpecial(event) {
             Curseur.getInstance().bas(TrouverNouvellePos(contenu.textContent, 'f'));
             break;
     }
+    compterLignesEtColonnes(chaineSansCurseur);
     resultatFormatage = formater(ajouterCurseur(chaineSansCurseur));
     contenu.innerHTML = spannifierCurseur(lignifier(resultatFormatage.Texte));
     if(resultatFormatage != null)
@@ -93,8 +99,6 @@ function compterLignesEtColonnes(tab) {
 function lignifier(s) {
     var res = "";
     var tab = s.split(/\n/);
-
-    compterLignesEtColonnes(tab);
 
     for (var i = 0; i < tab.length - 1; ++i) {
         res += "<span class='Numerote' >" + tab[i] + "\n</span>";

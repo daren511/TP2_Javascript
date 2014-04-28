@@ -188,7 +188,7 @@ function ajouterCurseur(s) {
     var avant = s.substring(0, posCurseur);
     var apres = s.substring(posCurseur, s.length);
 
-    return avant +/* "<span class='Curseur'>" + */Curseur.getInstance().getCaractere() /*+ "</span>" */+ apres;
+    return avant + Curseur.getInstance().getCaractere() + apres;
 }
 
 function trouverLignePlusGrosse(tab) {
