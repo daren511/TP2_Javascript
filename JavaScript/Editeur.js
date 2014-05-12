@@ -131,11 +131,25 @@ function minifier() {
         success: function (s) {
             var resultat = decodeURIComponent(escape(atob(s)));
             document.getElementById("minificateur").value = resultat;
-            // utiliser résultat
         },
         error: function (jqXHR, textStatus, errorThrown) {
             alert("Zut! " + JSON.stringify(jqXHR) +
                   textStatus + " ; " + JSON.stringify(errorThrown));
         }
     });
+}
+
+function changeKeywordsColor() {
+    var color = document.getElementById("Couleur").value;
+
+    $(".keyword").css("color", color);
+
+    setCookie("Keyword", color,7);
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
 }

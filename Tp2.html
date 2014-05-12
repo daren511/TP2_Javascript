@@ -15,6 +15,7 @@
     <script type="text/javascript" src="JavaScript/jquery-1.11.0.js"></script>
     <script type="text/javascript" src="JavaScript/index.js"></script>
     <script type="text/javascript" src="JavaScript/relais.js"></script>
+    <script type="text/javascript" src="JavaScript/jscolor/jscolor.js"></script>
 </head>
 <body class="prog" onload="placerCurseurDebut()">
     <div>
@@ -28,11 +29,12 @@
                     <td>Ligne : <span id="Ligne">0</span></td>
                     <td>Colonne :<span id="Colonne"> 0</span></td>
                     <td>Caractères : <span id="Char">0</span></td>
+                    <td>Mots-clés<input id="Couleur" class="color {hash:true}" /><button onclick="changeKeywordsColor()">Appliquer</button></td>
                 </tr>
             </table>
         </div>
         <br />
-        <input readonly="readonly" id="minificateur"></input>
+        <input readonly="readonly" id="minificateur"/>
         <button onclick="minifier()">Minifier</button>
     </div>
 </body>
