@@ -58,13 +58,17 @@ function formater(s) {
             temp = subStr(s, pos, prochain);
             Compteur.getInstance().ajouterMot(); // Compteur de mots
             if (keyWord(retirerChar(curseur, temp))) {
-                temp = "<span class='keyword'>" + temp + "</span>"; // Peinture le mot clé
+                temp = spanifier(temp,"keyword"); // Peinture le mot clé
             }
             pos = prochain;
             result += temp;
         }
     }
     return { Texte: result, Mots: Compteur.getInstance().getMots() };
+}
+
+function spanifier(s,classe){
+    return "<span class='"+ classe + "'>" + s + "</span>" 
 }
 
 function isSpace(c) {
@@ -223,8 +227,6 @@ function TrouverPosCurseur(tab) {
     return { Ligne: posLigne, Colonne: posTab };
 }
 
-   
-
 function TrouverNouvellePos(s,direction) {
     var tab = s.split(/\n/);
     var pos = 0;
@@ -272,5 +274,38 @@ function CalculerNouvellePos(tab, posTab, posLigne) {
         res += posLigne;
     }
 
-    return res
+    return res;
+}
+
+function joindreTabStringAlternatif(tabMots, tabNombre, MotNombre) {
+    var res = "";
+    if (MotNombre) {
+        res = joindreTab(tabMots, tabBltabNombreancs);
+    }
+    else {
+        res = joindreTab(tabNombre, tabMots);
+    }
+
+    return res;
+}
+
+function joindreTab(premierTab, deuxiemeTab) {
+    var resultat = "";
+    var nbDeTours = plusGrand(premierTab.length, deuxiemeTab.length);
+    for (var i = 0; i < nbDeTours; ++i) {
+        if (i < premierTab.length) {
+            resultat += premierTab[i];
+        }
+        if (i < deuxiemeTab.length) {
+            resultat += deuxiemeTab[i];
+        }
+    }
+    return resultat;
+}
+
+function plusGrand(premierNombre, deuxiemeNombre) {
+    if (premierNombre >= deuxiemeNombre)
+        return premierNombre;
+    else
+        return deuxiemeNombre;
 }

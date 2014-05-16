@@ -3,76 +3,166 @@ function lireUneToucheSpecial(event) {
     var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent);
     var posCur = Curseur.getInstance().getPosition();
     var resultatFormatage = null;
+    var color = getCookie("Keyword");
+
     switch (event.which) {
         case 8://Backspace
-            event.preventDefault();
-            if (chaineSansCurseur.length > 0 && posCur > 0) {
-                chaineSansCurseur = retirerLettreAvant(chaineSansCurseur, posCur); // Retire lettre
-                decrementeChar(); // Décrémente le nombre de char à l'effacement
-                Curseur.getInstance().gauche();
-            }
+            chaineSansCurseur = backspace(chaineSansCurseur, posCur, contenu, event);
             break;
         case 13://enter
-            event.preventDefault();
-            chaineSansCurseur = ajoutstring(chaineSansCurseur, "\n", posCur);
-            compteurChar(contenu.textContent + 1);
-            Curseur.getInstance().droite();
+            chaineSansCurseur = enter(chaineSansCurseur, posCur, contenu, event);
             break;
         case 37: // gauche
-            event.preventDefault();
-            if (posCur > 0 && contenu.textContent.length > 0) {
-                Curseur.getInstance().gauche();
+            if (event.ctrlKey && event.which == 37 && posCur > 0) {
+                ctrlFlecheGauche(chaineSansCurseur, posCur, contenu, event);
+            } else {
+                gauche(chaineSansCurseur, posCur, contenu, event);
             }
             break;
-        case 39: //droite
-            event.preventDefault();
-            if (posCur < contenu.textContent.length - 1 && contenu.textContent.length > 0) {
-                Curseur.getInstance().droite();
+        case 39: //droite   
+            if (event.ctrlKey && event.which == 39 && posCur < chaineSansCurseur.length) {
+                ctrlFlecheDroite(chaineSansCurseur, posCur, contenu, event);
+            } else {
+                droite(chaineSansCurseur, posCur, contenu, event);
             }
             break;
         case 40://down
-            event.preventDefault();
-            if (posCur < contenu.textContent.length) {
-                Curseur.getInstance().bas(TrouverNouvellePos(contenu.textContent, 'b')); // Mettre le curseur en bas de la position précédente
-            }
+            bas(chaineSansCurseur, posCur, contenu, event);
             break
-        case 38://up
-            event.preventDefault();
-            if (posCur > 0) {
-                Curseur.getInstance().haut(TrouverNouvellePos(contenu.textContent, 'h'));
-            }
+        case 38://up  
+            haut(chaineSansCurseur, posCur, contenu, event);
             break;
         case 46://delete
-            if (posCur < chaineSansCurseur.length) {
-                chaineSansCurseur = retirerLettreApres(chaineSansCurseur, posCur); // Retire la lettre a droite du curseur
-                decrementeChar(); // Compteur de char --
-            }
+            del(chaineSansCurseur, posCur, contenu, event);
             break;
         case 36://home
-            Curseur.getInstance().haut(TrouverNouvellePos(contenu.textContent, 'd'));
+            debut(chaineSansCurseur, posCur, contenu, event);
             break;
         case 35://end
-            Curseur.getInstance().bas(TrouverNouvellePos(contenu.textContent, 'f'));
+            end(chaineSansCurseur, posCur, contenu, event);
             break;
     }
     compterLignesEtColonnes(chaineSansCurseur);
-    resultatFormatage = formater(ajouterCurseur(chaineSansCurseur));
+    resultatFormatage = formater(colorierNombres(ajouterCurseur(chaineSansCurseur),"Nombres"));
     contenu.innerHTML = spannifierCurseur(lignifier(resultatFormatage.Texte));
-    if(resultatFormatage != null)
+    ajouterCouleur(color);
+    var test = colorierNombres(chaineSansCurseur, "Nombres");
+    if (resultatFormatage != null) {
         document.getElementById("Mots").innerHTML = resultatFormatage.Mots;
+        
+    }
 }
 
 document.addEventListener('keydown', lireUneToucheSpecial);
+
+function debut(chaineSansCurseur, posCur, contenu, event) {
+    Curseur.getInstance().haut(TrouverNouvellePos(contenu.textContent, 'd'));
+}
+
+function end(chaineSansCurseur, posCur, contenu, event) {
+    Curseur.getInstance().bas(TrouverNouvellePos(contenu.textContent, 'f'));
+}
+
+function gauche(chaineSansCurseur, posCur, contenu, event) {
+    event.preventDefault();
+    if (posCur > 0 && contenu.textContent.length > 0) {
+        Curseur.getInstance().gauche();
+    }
+}
+
+function droite(chaineSansCurseur, posCur, contenu, event) {
+    event.preventDefault();
+    if (posCur < contenu.textContent.length - 1 && contenu.textContent.length > 0) {
+        Curseur.getInstance().droite();
+    }
+}
+
+function bas(chaineSansCurseur, posCur, contenu, event) {
+    event.preventDefault();
+    if (posCur < contenu.textContent.length) {
+        Curseur.getInstance().bas(TrouverNouvellePos(contenu.textContent, 'b')); // Mettre le curseur en bas de la position précédente
+    }
+}
+
+function haut(chaineSansCurseur, posCur, contenu, event) {
+    event.preventDefault();
+    if (posCur > 0) {
+        Curseur.getInstance().haut(TrouverNouvellePos(contenu.textContent, 'h'));
+    }
+}
+
+function ctrlFlecheGauche(chaineSansCurseur, posCur, contenu, event) {
+    if(isSpace(chaineSansCurseur[posCur-1])){
+        do {
+            posCur--;
+        } while (isSpace(chaineSansCurseur[posCur - 1]) && posCur -1 >=0);
+    }
+    if (!isSpace(chaineSansCurseur[posCur - 1])){
+        do{
+            posCur--;
+        } while (!isSpace(chaineSansCurseur[posCur-1]) && posCur -1 >=0);
+        Curseur.getInstance().haut(posCur);
+    }
+}
+
+function ctrlFlecheDroite(chaineSansCurseur, posCur, contenu, event) {
+    if (!isSpace(chaineSansCurseur[posCur])) {
+        do {
+            posCur++;
+        } while (!isSpace(chaineSansCurseur[posCur]) && posCur + 1 < chaineSansCurseur.length-1);
+    }
+    if (isSpace(chaineSansCurseur[posCur])) {
+        do {
+            posCur++;
+        } while (isSpace(chaineSansCurseur[posCur]) && posCur + 1 < chaineSansCurseur.length - 1);
+        Curseur.getInstance().bas(posCur);
+    }
+}
+
+function del(chaineSansCurseur, posCur, contenu, event) {
+    event.preventDefault();
+    if (posCur < chaineSansCurseur.length) {
+        chaineSansCurseur = retirerLettreApres(chaineSansCurseur, posCur); // Retire la lettre a droite du curseur
+        decrementeChar(); // Compteur de char --
+    }
+
+    return chaineSansCurseur;
+}
+
+function backspace(chaineSansCurseur, posCur, contenu, event) {
+    event.preventDefault();
+    if (chaineSansCurseur.length > 0 && posCur > 0) {
+        chaineSansCurseur = retirerLettreAvant(chaineSansCurseur, posCur); // Retire lettre
+        decrementeChar(); // Décrémente le nombre de char à l'effacement
+        Curseur.getInstance().gauche();
+    }
+
+    return chaineSansCurseur;
+}
+
+function enter(chaineSansCurseur, posCur, contenu, event) {
+    event.preventDefault();
+    chaineSansCurseur = ajoutstring(chaineSansCurseur, "\n", posCur);
+    compteurChar(contenu.textContent + 1);
+    Curseur.getInstance().droite();
+
+    return chaineSansCurseur;
+}
+
+
+
 function lireUneTouche(event) {
     var contenu = document.getElementById("Editeur");
     if (event.which != 0 && event.charCode != 0 && event.keyCode != 13) {
         var curPosition = Curseur.getInstance().getPosition();
         var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent); // on retire le curseur
+        var color = getCookie("Keyword");
 
         chaineSansCurseur = ajoutstring(chaineSansCurseur, String.fromCharCode(event.which), curPosition)//ajout de la touche a la chaine
         compteurChar(contenu.textContent); // Compteur de char ++
         Curseur.getInstance().droite();
-        contenu.innerHTML = spannifierCurseur(lignifier(formater(ajouterCurseur(chaineSansCurseur)).Texte));
+        contenu.innerHTML = spannifierCurseur(lignifier(formater(colorierNombres(ajouterCurseur(chaineSansCurseur), "Nombres")).Texte));
+        ajouterCouleur(color);
     }
 }
 document.addEventListener('keypress', lireUneTouche);
@@ -139,12 +229,37 @@ function minifier() {
     });
 }
 
+var tabFonctions = (function () {
+    var instance;
+    function ZeCompteur() {
+        this.fonctionReturn = new Array();
+        fonctionReturn[8] = backspace;
+
+    }
+    function createInstance() {
+        var singleton = new ZeCompteur();
+        return singleton;
+    }
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
+function ajouterCouleur(color) {
+    $(".keyword").css("color", color);
+}
+
 function changeKeywordsColor() {
     var color = document.getElementById("Couleur").value;
 
     $(".keyword").css("color", color);
 
-    setCookie("Keyword", color,7);
+    setCookie("Keyword", color , 7);
 }
 
 function setCookie(cname, cvalue, exdays) {
@@ -152,4 +267,54 @@ function setCookie(cname, cvalue, exdays) {
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
     var expires = "expires=" + d.toGMTString();
     document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+function init(){
+    placerCurseurDebut();
+    checkCookie();
+}
+
+function checkCookie() {
+    var color = getCookie("Keyword");
+    if (color != "") {
+        $(".keyword").css("color", color);
+        document.getElementById("Couleur").value = color;
+    }
+    else {
+        alert(color);
+    }
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i].trim();
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+    }
+    return "";
+}
+
+function colorierNombres(s, classe) {
+    var tabDeNonNombres = s.split(/\d+/g); // Sépare chaque mot de s en lignes d'un tableau (s est séparé par tous les espaces/tabulations et newLine, qui soit en suite ou non)
+    var tabDeNombres = s.split(/\D+/g); // Créé un tableau qui converse tous les blancs de s
+    
+    //ici on retire dans le premier espace du tableau si il est vide
+    if (tabDeNombres[0] == "") {
+        tabDeNombres.shift();
+    }
+    if (tabDeNonNombres[0] == "") {
+        tabDeNonNombres.shift();
+    }
+    for (var i = 0; i < tabDeNombres.length; ++i) {
+        if (tabDeNombres[i] != "") { // si il y a rien on applique rien
+            tabDeNombres[i] = spanifier(tabDeNombres[i], classe);
+        }
+    }
+    var nombresEnPremier = true;
+
+    if (s.search(/\D+/g) == 0) {
+        nombresEnPremier = false;
+    }
+    return joindreTabStringAlternatif(tabDeNombres, tabDeNonNombres, nombresEnPremier);
 }
