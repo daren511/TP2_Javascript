@@ -277,10 +277,10 @@ function CalculerNouvellePos(tab, posTab, posLigne) {
     return res;
 }
 
-function joindreTabStringAlternatif(tabMots, tabNombre, MotNombre) {
+function joindre2TabString(tabMots, tabNombre, MotNombre) {
     var res = "";
     if (MotNombre) {
-        res = joindreTab(tabMots, tabBltabNombreancs);
+        res = joindreTab(tabMots, tabNombre);
     }
     else {
         res = joindreTab(tabNombre, tabMots);
@@ -308,38 +308,4 @@ function plusGrand(premierNombre, deuxiemeNombre) {
         return premierNombre;
     else
         return deuxiemeNombre;
-}
-function getSelectionHtml() {
-    var html = "";
-
-    if (typeof window.getSelection != "undefined") {
-        var sel = window.getSelection();
-        if (sel.rangeCount) {
-            var container = document.createElement("div");
-            for (var i = 0, len = sel.rangeCount; i < len; ++i) {
-                container.appendChild(sel.getRangeAt(i).cloneContents());
-            }
-            html = container.innerHTML;
-        }
-    } else if (typeof document.selection != "undefined") {
-        if (document.selection.type == "Text") {
-            html = document.selection.createRange().htmlText;
-        }
-    }
-    return html;
-}
-
-function contextMenu(selection) {
-    var menu = [{
-        name: 'Aide',
-        img: 'aide.png',
-        title: 'aide mot clé',
-        fun: function () {
-            var link = "https://www.processing.org/reference/" + selection + ".html";
-            window.open(link);
-        }
-    }];
-
-
-    $("div.preformatted").contextMenu(menu);
 }

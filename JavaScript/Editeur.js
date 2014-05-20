@@ -1,56 +1,57 @@
 function lireUneToucheSpecial(event) {
-    var contenu = document.getElementById("Editeur");
-    var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent);
-    var posCur = Curseur.getInstance().getPosition();
-    var resultatFormatage = null;
-    var color = getCookie("Keyword");
-    var colorNombre = getCookie("Nombres");////////////////////////////////
+    if ($(document.activeElement).is("#Editeur")) {
+        var contenu = document.getElementById("Editeur");
+        var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent);
+        var posCur = Curseur.getInstance().getPosition();
+        var resultatFormatage = null;
+        var color = getCookie("Keyword");
 
-    switch (event.which) {
-        case 8://Backspace
-            chaineSansCurseur = backspace(chaineSansCurseur, posCur, contenu, event);
-            break;
-        case 13://enter
-            chaineSansCurseur = enter(chaineSansCurseur, posCur, contenu, event);
-            break;
-        case 37: // gauche
-            if (event.ctrlKey && event.which == 37 && posCur > 0) {
-                ctrlFlecheGauche(chaineSansCurseur, posCur, contenu, event);
-            } else {
-                gauche(chaineSansCurseur, posCur, contenu, event);
-            }
-            break;
-        case 39: //droite   
-            if (event.ctrlKey && event.which == 39 && posCur < chaineSansCurseur.length) {
-                ctrlFlecheDroite(chaineSansCurseur, posCur, contenu, event);
-            } else {
-                droite(chaineSansCurseur, posCur, contenu, event);
-            }
-            break;
-        case 40://down
-            bas(chaineSansCurseur, posCur, contenu, event);
-            break
-        case 38://up  
-            haut(chaineSansCurseur, posCur, contenu, event);
-            break;
-        case 46://delete
-            del(chaineSansCurseur, posCur, contenu, event);
-            break;
-        case 36://home
-            debut(chaineSansCurseur, posCur, contenu, event);
-            break;
-        case 35://end
-            end(chaineSansCurseur, posCur, contenu, event);
-            break;
-    }
-    compterLignesEtColonnes(chaineSansCurseur);
-    resultatFormatage = formater(colorierNombres(ajouterCurseur(chaineSansCurseur),"Nombres"));
-    contenu.innerHTML = spannifierCurseur(lignifier(resultatFormatage.Texte));
-    ajouterCouleur(color);
-    var test = colorierNombres(chaineSansCurseur, "Nombres");
-    if (resultatFormatage != null) {
-        document.getElementById("Mots").innerHTML = resultatFormatage.Mots;
-        
+        switch (event.which) {
+            case 8://Backspace
+                chaineSansCurseur = backspace(chaineSansCurseur, posCur, contenu, event);
+                break;
+            case 13://enter
+                chaineSansCurseur = enter(chaineSansCurseur, posCur, contenu, event);
+                break;
+            case 37: // gauche
+                if (event.ctrlKey && event.which == 37 && posCur > 0) {
+                    Curseur.getInstance().haut(ctrlFlecheGauche(chaineSansCurseur, posCur, contenu, event));
+                } else {
+                    gauche(chaineSansCurseur, posCur, contenu, event);
+                }
+                break;
+            case 39: //droite   
+                if (event.ctrlKey && event.which == 39 && posCur < chaineSansCurseur.length) {
+                    Curseur.getInstance().bas(ctrlFlecheDroite(chaineSansCurseur, posCur, contenu, event));
+                } else {
+                    droite(chaineSansCurseur, posCur, contenu, event);
+                }
+                break;
+            case 40://down
+                bas(chaineSansCurseur, posCur, contenu, event);
+                break
+            case 38://up  
+                haut(chaineSansCurseur, posCur, contenu, event);
+                break;
+            case 46://delete
+                del(chaineSansCurseur, posCur, contenu, event);
+                break;
+            case 36://home
+                debut(chaineSansCurseur, posCur, contenu, event);
+                break;
+            case 35://end
+                end(chaineSansCurseur, posCur, contenu, event);
+                break;
+        }
+        compterLignesEtColonnes(chaineSansCurseur);
+        resultatFormatage = formater(colorierNombres(ajouterCurseur(chaineSansCurseur), "Nombres"));
+        contenu.innerHTML = spannifierCurseur(lignifier(resultatFormatage.Texte));
+        appliquerCouleurs();
+        var test = colorierNombres(chaineSansCurseur, "Nombres");
+        if (resultatFormatage != null) {
+            document.getElementById("Mots").innerHTML = resultatFormatage.Mots;
+
+        }
     }
 }
 
@@ -102,7 +103,7 @@ function ctrlFlecheGauche(chaineSansCurseur, posCur, contenu, event) {
         do{
             posCur--;
         } while (!isSpace(chaineSansCurseur[posCur-1]) && posCur -1 >=0);
-        Curseur.getInstance().haut(posCur);
+        return posCur;
     }
 }
 
@@ -116,7 +117,7 @@ function ctrlFlecheDroite(chaineSansCurseur, posCur, contenu, event) {
         do {
             posCur++;
         } while (isSpace(chaineSansCurseur[posCur]) && posCur + 1 < chaineSansCurseur.length - 1);
-        Curseur.getInstance().bas(posCur);
+        return posCur;
     }
 }
 
@@ -158,7 +159,6 @@ function lireUneTouche(event) {
         var curPosition = Curseur.getInstance().getPosition();
         var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent); // on retire le curseur
         var color = getCookie("Keyword");
-        var colorNombre = getCookie("Nombres");/////////////////////////////
 
         chaineSansCurseur = ajoutstring(chaineSansCurseur, String.fromCharCode(event.which), curPosition)//ajout de la touche a la chaine
         compteurChar(contenu.textContent); // Compteur de char ++
@@ -252,14 +252,15 @@ var tabFonctions = (function () {
     };
 })();
 
-function ajouterCouleur(color) {
-    $(".keyword").css("color", color);
-    $(".Nombres").css("color", color); /////////////////////
+function appliquerCouleurs() {
+    var Keywords = getCookie("Keyword");
+    var Numeros
+    $("." + Keywords).css("color", Keywords);
 }
 
 function changeKeywordsColor() {
-    var color = document.getElementById("Couleur").value;
-
+    var colorKeyword = document.getElementById("CouleurKeywords").value;
+    var colorNombres = document.getElementById("CouleurNombre").value;
     $(".keyword").css("color", color);
 
     setCookie("Keyword", color , 7);
@@ -286,13 +287,10 @@ function init(){
 }
 
 function checkCookie() {
-    var color = getCookie("Keyword");
-    if (color != "") {
-        $(".keyword").css("color", color);
+    var Keyword = getCookie("Keyword");
+    if (Keyword != "") {
+        $(".Keyword").css("color", Keyword);
         document.getElementById("Couleur").value = color;
-    }
-    else {
-        alert(color);
     }
 }
 
@@ -307,19 +305,19 @@ function getCookie(cname) {
 }
 
 function colorierNombres(s, classe) {
-    var tabDeNonNombres = s.split(/\d+/g); // Sépare chaque mot de s en lignes d'un tableau (s est séparé par tous les espaces/tabulations et newLine, qui soit en suite ou non)
-    var tabDeNombres = s.split(/\D+/g); // Créé un tableau qui converse tous les blancs de s
+    var tabNonNombres = s.split(/\d+/g); // Sépare chaque mot de s en lignes d'un tableau (s est séparé par tous les espaces/tabulations et newLine, qui soit en suite ou non)
+    var tabNombres = s.split(/\D+/g); // Créé un tableau qui converse tous les blancs de s
     
     //ici on retire dans le premier espace du tableau si il est vide
-    if (tabDeNombres[0] == "") {
-        tabDeNombres.shift();
+    if (tabNombres[0] == "") {
+        tabNombres.shift();
     }
-    if (tabDeNonNombres[0] == "") {
-        tabDeNonNombres.shift();
+    if (tabNonNombres[0] == "") {
+        tabNonNombres.shift();
     }
-    for (var i = 0; i < tabDeNombres.length; ++i) {
-        if (tabDeNombres[i] != "") { // si il y a rien on applique rien
-            tabDeNombres[i] = spanifier(tabDeNombres[i], classe);
+    for (var i = 0; i < tabNombres.length; ++i) {
+        if (tabNombres[i] != "") { // si il y a rien on applique rien
+            tabNombres[i] = spanifier(tabNombres[i], classe);
         }
     }
     var nombresEnPremier = true;
@@ -327,5 +325,64 @@ function colorierNombres(s, classe) {
     if (s.search(/\D+/g) == 0) {
         nombresEnPremier = false;
     }
-    return joindreTabStringAlternatif(tabDeNombres, tabDeNonNombres, nombresEnPremier);
+    return joindre2TabString(tabNombres, tabNonNombres, nombresEnPremier);
+}
+
+function spanifierSelonCaracteres(s, charDebut, charFin, classe, surUneLigne) {
+    var regex;
+
+    //c'est regex sont une gracieusete de Mathieu Dumoulin!
+    if (surUneLigne) {
+        regex = new RegExp(caractereDebut + "(.*?)" + caractereFin, 'g');
+    }
+    else {
+        regex = new RegExp(caractereDebut + "((?:.|\\s)*?)" + caractereFin, 'g');
+    }
+    var tabMots = s.split(regex);
+    var tabMotsIsoles = s.match(regex);
+    var doubleBackSlash = new RegExp("\\\\", 'g');
+    caractereDebut = caractereDebut.replace(doubleBackSlash, "");
+    caractereFin = caractereFin.replace(doubleBackSlash, "");
+    for (var i = 1; i < tabMots.length - 1; ++i) {
+        var motEvalue = caractereDebut + tabMots[i] + caractereFin;
+        if (tabMotsIsoles[0] == motEvalue) {
+            tabMots[i] = spanifier(motEvalue, classe);
+            tabMotsIsoles.shift();
+        }
+    }
+    return tabMots.join("");
+}
+function getSelectionHtml() {
+    var html = "";
+
+    if (typeof window.getSelection != "undefined") {
+        var sel = window.getSelection();
+        if (sel.rangeCount) {
+            var container = document.createElement("div");
+            for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+                container.appendChild(sel.getRangeAt(i).cloneContents());
+            }
+            html = container.innerHTML;
+        }
+    } else if (typeof document.selection != "undefined") {
+        if (document.selection.type == "Text") {
+            html = document.selection.createRange().htmlText;
+        }
+    }
+    return html;
+}
+
+function contextMenu(selection) {
+    var menu = [{
+        name: 'Aide',
+        img: 'aide.png',
+        title: 'aide mot clé',
+        fun: function () {
+            var link = "https://www.processing.org/reference/" + selection + ".html";
+            window.open(link);
+        }
+    }];
+
+
+    $('div.preformatted').contextMenu(menu);
 }
