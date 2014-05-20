@@ -4,6 +4,7 @@ function lireUneToucheSpecial(event) {
     var posCur = Curseur.getInstance().getPosition();
     var resultatFormatage = null;
     var color = getCookie("Keyword");
+    var colorNombre = getCookie("Nombres");////////////////////////////////
 
     switch (event.which) {
         case 8://Backspace
@@ -157,6 +158,7 @@ function lireUneTouche(event) {
         var curPosition = Curseur.getInstance().getPosition();
         var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent); // on retire le curseur
         var color = getCookie("Keyword");
+        var colorNombre = getCookie("Nombres");/////////////////////////////
 
         chaineSansCurseur = ajoutstring(chaineSansCurseur, String.fromCharCode(event.which), curPosition)//ajout de la touche a la chaine
         compteurChar(contenu.textContent); // Compteur de char ++
@@ -252,6 +254,7 @@ var tabFonctions = (function () {
 
 function ajouterCouleur(color) {
     $(".keyword").css("color", color);
+    $(".Nombres").css("color", color); /////////////////////
 }
 
 function changeKeywordsColor() {
@@ -260,6 +263,14 @@ function changeKeywordsColor() {
     $(".keyword").css("color", color);
 
     setCookie("Keyword", color , 7);
+}
+function changeNombreColor() {
+    var color = document.getElementById("CouleurNombre").value;
+
+    $(".Nombres").css("color", color);
+
+    setCookie("Nombres", color, 7);
+
 }
 
 function setCookie(cname, cvalue, exdays) {

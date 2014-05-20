@@ -309,3 +309,37 @@ function plusGrand(premierNombre, deuxiemeNombre) {
     else
         return deuxiemeNombre;
 }
+function getSelectionHtml() {
+    var html = "";
+
+    if (typeof window.getSelection != "undefined") {
+        var sel = window.getSelection();
+        if (sel.rangeCount) {
+            var container = document.createElement("div");
+            for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+                container.appendChild(sel.getRangeAt(i).cloneContents());
+            }
+            html = container.innerHTML;
+        }
+    } else if (typeof document.selection != "undefined") {
+        if (document.selection.type == "Text") {
+            html = document.selection.createRange().htmlText;
+        }
+    }
+    return html;
+}
+
+function contextMenu(selection) {
+    var menu = [{
+        name: 'Aide',
+        img: 'aide.png',
+        title: 'aide mot clé',
+        fun: function () {
+            var link = "https://www.processing.org/reference/" + selection + ".html";
+            window.open(link);
+        }
+    }];
+
+
+    $("div.preformatted").contextMenu(menu);
+}
