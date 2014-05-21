@@ -20,7 +20,7 @@ function lireUneToucheSpecial(event) {
                     gauche(chaineSansCurseur, posCur, contenu, event);
                 }
                 break;
-            case 39: //droite   
+            case 39: //droite
                 if (event.ctrlKey && event.which == 39 && posCur < chaineSansCurseur.length) {
                     Curseur.getInstance().bas(ctrlFlecheDroite(chaineSansCurseur, posCur, contenu, event));
                 } else {
@@ -30,7 +30,7 @@ function lireUneToucheSpecial(event) {
             case 40://down
                 bas(chaineSansCurseur, posCur, contenu, event);
                 break
-            case 38://up  
+            case 38://up
                 haut(chaineSansCurseur, posCur, contenu, event);
                 break;
             case 46://delete
@@ -300,7 +300,7 @@ function getCookie(cname) {
 function colorierNombres(s, classe) {
     var tabNonNombres = s.split(/\d+/g); // Sépare chaque mot de s en lignes d'un tableau (s est séparé par tous les espaces/tabulations et newLine, qui soit en suite ou non)
     var tabNombres = s.split(/\D+/g); // Créé un tableau qui converse tous les blancs de s
-    
+
     //ici on retire dans le premier espace du tableau si il est vide
     if (tabNombres[0] == "") {
         tabNombres.shift();
@@ -364,7 +364,6 @@ function getSelectionHtml() {
     }
     return html;
 }
-
 function contextMenu(selection) {
     var menu = [{
         name: 'Aide',
