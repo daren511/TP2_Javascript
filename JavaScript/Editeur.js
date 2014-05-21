@@ -1,5 +1,5 @@
 function lireUneToucheSpecial(event) {
-    if ($(document.activeElement).is("#Editeur")) {
+    //if ($(document.activeElement).is("#Editeur")) {
         var contenu = document.getElementById("Editeur");
         var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent);
         var posCur = Curseur.getInstance().getPosition();
@@ -47,12 +47,10 @@ function lireUneToucheSpecial(event) {
         resultatFormatage = formater(colorierNombres(ajouterCurseur(chaineSansCurseur), "Nombres"));
         contenu.innerHTML = spannifierCurseur(lignifier(resultatFormatage.Texte));
         appliquerCouleurs();
-        var test = colorierNombres(chaineSansCurseur, "Nombres");
         if (resultatFormatage != null) {
             document.getElementById("Mots").innerHTML = resultatFormatage.Mots;
-
         }
-    }
+   // }
 }
 
 document.addEventListener('keydown', lireUneToucheSpecial);
@@ -158,13 +156,12 @@ function lireUneTouche(event) {
     if (event.which != 0 && event.charCode != 0 && event.keyCode != 13) {
         var curPosition = Curseur.getInstance().getPosition();
         var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent); // on retire le curseur
-        var color = getCookie("Keyword");
 
         chaineSansCurseur = ajoutstring(chaineSansCurseur, String.fromCharCode(event.which), curPosition)//ajout de la touche a la chaine
         compteurChar(contenu.textContent); // Compteur de char ++
         Curseur.getInstance().droite();
         contenu.innerHTML = spannifierCurseur(lignifier(formater(colorierNombres(ajouterCurseur(chaineSansCurseur), "Nombres")).Texte));
-        ajouterCouleur(color);
+        appliquerCouleurs();
     }
 }
 document.addEventListener('keypress', lireUneTouche);
@@ -184,7 +181,8 @@ function decrementeChar() {
 function placerCurseurDebut() {
     document.getElementById("Editeur").innerHTML += "<span class='Curseur'>" + Curseur.getInstance().getCaractere() + "</span>";
 }
-function compterLignesEtColonnes(tab) {
+function compterLignesEtColonnes(chaine) {
+    var tab = chaine.split(/\n/);
     document.getElementById("Ligne").innerHTML = tab.length; // Compteur de lignes
     document.getElementById("Colonne").innerHTML = trouverLignePlusGrosse(tab); // Compteur de colonnes
 }
@@ -254,24 +252,19 @@ var tabFonctions = (function () {
 
 function appliquerCouleurs() {
     var Keywords = getCookie("Keyword");
-    var Numeros
-    $("." + Keywords).css("color", Keywords);
+    var Nombres = getCookie("Nombres");
+    $(".keyword").css("color", Keywords);
+    $(".Nombres").css("color", Nombres);
 }
 
-function changeKeywordsColor() {
+function changeColor() {
     var colorKeyword = document.getElementById("CouleurKeywords").value;
     var colorNombres = document.getElementById("CouleurNombre").value;
-    $(".keyword").css("color", color);
+    $(".keyword").css("color", colorKeyword);
+    $(".Nombres").css("color", colorNombres);
 
-    setCookie("Keyword", color , 7);
-}
-function changeNombreColor() {
-    var color = document.getElementById("CouleurNombre").value;
-
-    $(".Nombres").css("color", color);
-
-    setCookie("Nombres", color, 7);
-
+    setCookie("Keyword", colorKeyword, 7);
+    setCookie("Nombres", colorNombres, 7);
 }
 
 function setCookie(cname, cvalue, exdays) {
@@ -328,10 +321,10 @@ function colorierNombres(s, classe) {
     return joindre2TabString(tabNombres, tabNonNombres, nombresEnPremier);
 }
 
-function spanifierSelonCaracteres(s, charDebut, charFin, classe, surUneLigne) {
+function spanifierSelonCaracteres(s, charDebut, charFin, classe, UneLigne) {
     var regex;
 
-    //c'est regex sont une gracieusete de Mathieu Dumoulin!
+    //ces regex sont une gracieusete de Mathieu Dumoulin!
     if (surUneLigne) {
         regex = new RegExp(caractereDebut + "(.*?)" + caractereFin, 'g');
     }
@@ -383,6 +376,19 @@ function contextMenu(selection) {
         }
     }];
 
-
     $('div.preformatted').contextMenu(menu);
+}
+
+function searchReplace() {
+    var search = document.getElementById("recherche").value;
+    var replace = document.getElementById("remplacer").value;
+    var texte = document.getElementById("Editeur").textContent;
+    // On eleve le curseur
+    texte = replaceString(texte, Curseur.getInstance().getCaractere(), "");
+    // change le texte et vide les box
+    texte = replaceString(texte, new RegExp(search, 'g'), replace);
+    document.getElementById("recherche").value = "";
+    document.getElementById("remplacer").value = "";
+    // Re ajoute tout le style
+    peinturer(texte, "Editeur");
 }

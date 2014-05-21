@@ -309,3 +309,7 @@ function plusGrand(premierNombre, deuxiemeNombre) {
     else
         return deuxiemeNombre;
 }
+
+function replaceString(stringInit, stringARetirer, stringARajouter) {
+    return stringInit.replace(stringARetirer, stringARajouter);
+}
