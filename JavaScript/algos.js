@@ -58,7 +58,7 @@ function formater(s) {
             temp = subStr(s, pos, prochain);
             Compteur.getInstance().ajouterMot(); // Compteur de mots
             if (keyWord(retirerChar(curseur, temp))) {
-                temp = spanifier(temp,"keyword"); // Peinture le mot clé
+                temp = spanifier(temp, "keyword"); // Peinture le mot clé
             }
             pos = prochain;
             result += temp;
@@ -67,8 +67,8 @@ function formater(s) {
     return { Texte: result, Mots: Compteur.getInstance().getMots() };
 }
 
-function spanifier(s,classe){
-    return "<span class='"+ classe + "'>" + s + "</span>" 
+function spanifier(s, classe) {
+    return "<span class='" + classe + "'>" + s + "</span>"
 }
 
 function isSpace(c) {
@@ -163,6 +163,10 @@ var Curseur = (function () {
                 this.position = pos;
             }
         }
+        // cette fonction est appeler au moment ou nous appelons ctrl + Z
+        this.Annuler = function (pos) {
+            this.position = pos;
+        }
     }
     function createInstance() {
         var singleton = new ZeCurseur();
@@ -201,7 +205,7 @@ function trouverLignePlusGrosse(tab) {
     for (var i = 0; i < tab.length; ++i) {
         if (plusGrosse < tab[i].length) {
             if (tab[i].search(curseur) != -1) {
-                plusGrosse = tab[i].length-1;
+                plusGrosse = tab[i].length - 1;
             }
             else {
                 plusGrosse = tab[i].length;
@@ -226,8 +230,10 @@ function TrouverPosCurseur(tab) {
 
     return { Ligne: posLigne, Colonne: posTab };
 }
-
-function TrouverNouvellePos(s,direction) {
+//quand c'est pas un des cas suivant : h(haut),b(bas),d(debut),f(fin)
+//la fonction retourne 0
+//dans les autre cas elle calcul la nouvelle position
+function TrouverNouvellePos(s, direction) {
     var tab = s.split(/\n/);
     var pos = 0;
 
@@ -235,7 +241,7 @@ function TrouverNouvellePos(s,direction) {
 
     var posLigne = position.Ligne;
     var posTab = position.Colonne;
-
+    
     switch (direction) {
         case 'h':
             if (posTab != 0) {
@@ -254,7 +260,7 @@ function TrouverNouvellePos(s,direction) {
             }
             break;
         case 'f':
-                pos = CalculerNouvellePos(tab, posTab, tab[posTab].length-1)
+            pos = CalculerNouvellePos(tab, posTab, tab[posTab].length - 1)
             break;
     }
 
@@ -290,17 +296,17 @@ function joindre2TabString(tabMots, tabNombre, MotNombre) {
 }
 
 function joindreTab(premierTab, deuxiemeTab) {
-    var resultat = "";
-    var nbDeTours = plusGrand(premierTab.length, deuxiemeTab.length);
-    for (var i = 0; i < nbDeTours; ++i) {
+    var res = "";
+    var nbTours = plusGrand(premierTab.length, deuxiemeTab.length);
+    for (var i = 0; i < nbTours; ++i) {
         if (i < premierTab.length) {
-            resultat += premierTab[i];
+            res += premierTab[i];
         }
         if (i < deuxiemeTab.length) {
-            resultat += deuxiemeTab[i];
+            res += deuxiemeTab[i];
         }
     }
-    return resultat;
+    return res;
 }
 
 function plusGrand(premierNombre, deuxiemeNombre) {
@@ -312,4 +318,27 @@ function plusGrand(premierNombre, deuxiemeNombre) {
 
 function replaceString(stringInit, stringARetirer, stringARajouter) {
     return stringInit.replace(stringARetirer, stringARajouter);
+}
+
+function getSelectionText() {
+    var text = "";
+    if (window.getSelection) {
+        text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+        text = document.selection.createRange().text;
+    }
+    return text;
+}
+
+function retirerLettreAvant(s, position) {
+    var avant = s.substring(0, position - 1);
+    var apres = s.substring(position, s.length);
+
+    return avant + apres;
+}
+function retirerLettreApres(s, position) {
+    var avant = s.substring(0, position);
+    var apres = s.substring(position + 1, s.length);
+
+    return avant + apres;
 }

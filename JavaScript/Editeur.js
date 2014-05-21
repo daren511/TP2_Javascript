@@ -1,59 +1,61 @@
 function lireUneToucheSpecial(event) {
-    //if ($(document.activeElement).is("#Editeur")) {
-        var contenu = document.getElementById("Editeur");
-        var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent);
-        var posCur = Curseur.getInstance().getPosition();
-        var resultatFormatage = null;
-        var color = getCookie("Keyword");
+    var contenu = document.getElementById("Editeur");
+    var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent);
+    var posCur = Curseur.getInstance().getPosition();
+    var resultatFormatage = null;
+    switch (event.which) {
+        case 8://Backspace
+            chaineSansCurseur = backspace(chaineSansCurseur, posCur, contenu, event);
+            break;
+        case 13://enter
+            chaineSansCurseur = enter(chaineSansCurseur, posCur, contenu, event);
+            break;
+        case 90://ctrl + Z
+            if (event.ctrlKey && event.which == 90) {
+                chaineSansCurseur = annulerDerniereAction();
+            }
+            break;
+        case 37: // gauche
+            if (event.ctrlKey && event.which == 37 && posCur > 0) {
+                Curseur.getInstance().haut(ctrlFlecheGauche(chaineSansCurseur, posCur, contenu, event));
+            } else {
+                gauche(chaineSansCurseur, posCur, contenu, event);
+            }
+            break;
+        case 39: //droite
+            if (event.ctrlKey && event.which == 39 && posCur < chaineSansCurseur.length) {
+                Curseur.getInstance().bas(ctrlFlecheDroite(chaineSansCurseur, posCur, contenu, event));
+            } else {
+                droite(chaineSansCurseur, posCur, contenu, event);
+            }
+            break;
+        case 40://down
+            bas(chaineSansCurseur, posCur, contenu, event);
+            break
+        case 38://up
+            haut(chaineSansCurseur, posCur, contenu, event);
+            break;
+        case 46://delete
+            del(chaineSansCurseur, posCur, contenu, event);
+            break;
+        case 36://home
+            debut(chaineSansCurseur, posCur, contenu, event);
+            break;
+        case 35://end
+            end(chaineSansCurseur, posCur, contenu, event);
+            break;
 
-        switch (event.which) {
-            case 8://Backspace
-                chaineSansCurseur = backspace(chaineSansCurseur, posCur, contenu, event);
-                break;
-            case 13://enter
-                chaineSansCurseur = enter(chaineSansCurseur, posCur, contenu, event);
-                break;
-            case 37: // gauche
-                if (event.ctrlKey && event.which == 37 && posCur > 0) {
-                    Curseur.getInstance().haut(ctrlFlecheGauche(chaineSansCurseur, posCur, contenu, event));
-                } else {
-                    gauche(chaineSansCurseur, posCur, contenu, event);
-                }
-                break;
-            case 39: //droite
-                if (event.ctrlKey && event.which == 39 && posCur < chaineSansCurseur.length) {
-                    Curseur.getInstance().bas(ctrlFlecheDroite(chaineSansCurseur, posCur, contenu, event));
-                } else {
-                    droite(chaineSansCurseur, posCur, contenu, event);
-                }
-                break;
-            case 40://down
-                bas(chaineSansCurseur, posCur, contenu, event);
-                break
-            case 38://up
-                haut(chaineSansCurseur, posCur, contenu, event);
-                break;
-            case 46://delete
-                del(chaineSansCurseur, posCur, contenu, event);
-                break;
-            case 36://home
-                debut(chaineSansCurseur, posCur, contenu, event);
-                break;
-            case 35://end
-                end(chaineSansCurseur, posCur, contenu, event);
-                break;
-        }
-        compterLignesEtColonnes(chaineSansCurseur);
-        resultatFormatage = formater(colorierNombres(ajouterCurseur(chaineSansCurseur), "Nombres"));
-        contenu.innerHTML = spannifierCurseur(lignifier(resultatFormatage.Texte));
-        appliquerCouleurs();
-        if (resultatFormatage != null) {
-            document.getElementById("Mots").innerHTML = resultatFormatage.Mots;
-        }
-   // }
+    }
+    compterLignesEtColonnes(chaineSansCurseur);
+    contenu.innerHTML = paint(chaineSansCurseur);
+    appliquerCouleurs();
+    if (resultatFormatage != null) {
+        document.getElementById("Mots").innerHTML = resultatFormatage.Mots;
+    }
 }
 
 document.addEventListener('keydown', lireUneToucheSpecial);
+
 
 function debut(chaineSansCurseur, posCur, contenu, event) {
     Curseur.getInstance().haut(TrouverNouvellePos(contenu.textContent, 'd'));
@@ -92,16 +94,24 @@ function haut(chaineSansCurseur, posCur, contenu, event) {
 }
 
 function ctrlFlecheGauche(chaineSansCurseur, posCur, contenu, event) {
-    if(isSpace(chaineSansCurseur[posCur-1])){
+    if (isSpace(chaineSansCurseur[posCur - 1])) {
         do {
             posCur--;
-        } while (isSpace(chaineSansCurseur[posCur - 1]) && posCur -1 >=0);
+        } while (isSpace(chaineSansCurseur[posCur - 1]) && posCur - 1 >= 0);
     }
-    if (!isSpace(chaineSansCurseur[posCur - 1])){
-        do{
+    if (!isSpace(chaineSansCurseur[posCur - 1])) {
+        do {
             posCur--;
-        } while (!isSpace(chaineSansCurseur[posCur-1]) && posCur -1 >=0);
+        } while (!isSpace(chaineSansCurseur[posCur - 1]) && posCur - 1 >= 0);
         return posCur;
+    }
+}
+
+function annulerDerniereAction() {
+    if (!Sauvegarde.getInstance().estVide()) {
+        var sauvegarde = Sauvegarde.getInstance().getSauvegarde();
+        Curseur.getInstance().Annuler(sauvegarde.Position);
+        return sauvegarde.Texte;
     }
 }
 
@@ -109,7 +119,7 @@ function ctrlFlecheDroite(chaineSansCurseur, posCur, contenu, event) {
     if (!isSpace(chaineSansCurseur[posCur])) {
         do {
             posCur++;
-        } while (!isSpace(chaineSansCurseur[posCur]) && posCur + 1 < chaineSansCurseur.length-1);
+        } while (!isSpace(chaineSansCurseur[posCur]) && posCur + 1 < chaineSansCurseur.length - 1);
     }
     if (isSpace(chaineSansCurseur[posCur])) {
         do {
@@ -149,19 +159,24 @@ function enter(chaineSansCurseur, posCur, contenu, event) {
     return chaineSansCurseur;
 }
 
-
+function paint(chaineSansCurseur) {
+    resultatFormatage = formater(colorierNombres(ajouterCurseur(chaineSansCurseur), "Nombres"));
+    return spannifierCurseur(lignifier(resultatFormatage.Texte));
+}
 
 function lireUneTouche(event) {
     var contenu = document.getElementById("Editeur");
     if (event.which != 0 && event.charCode != 0 && event.keyCode != 13) {
-        var curPosition = Curseur.getInstance().getPosition();
-        var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent); // on retire le curseur
-
-        chaineSansCurseur = ajoutstring(chaineSansCurseur, String.fromCharCode(event.which), curPosition)//ajout de la touche a la chaine
-        compteurChar(contenu.textContent); // Compteur de char ++
-        Curseur.getInstance().droite();
-        contenu.innerHTML = spannifierCurseur(lignifier(formater(colorierNombres(ajouterCurseur(chaineSansCurseur), "Nombres")).Texte));
-        appliquerCouleurs();
+        if (event.keycode != 26) {
+            var curPosition = Curseur.getInstance().getPosition();
+            var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), contenu.textContent); // on retire le curseur
+            Sauvegarde.getInstance().sauvegarder(chaineSansCurseur, curPosition);
+            chaineSansCurseur = ajoutstring(chaineSansCurseur, String.fromCharCode(event.which), curPosition)//ajout de la touche a la chaine
+            compteurChar(contenu.textContent); // Compteur de char ++
+            Curseur.getInstance().droite();
+            contenu.innerHTML = paint(chaineSansCurseur);
+            appliquerCouleurs();
+        }
     }
 }
 document.addEventListener('keypress', lireUneTouche);
@@ -171,6 +186,45 @@ function spannifierCurseur(s) {
     s = s.replace(curseur, "<span class='Curseur'>" + curseur + "</span>");
     return s;
 }
+
+var Sauvegarde = (function () {
+    var instance;
+    function zeSauvegarde() {
+        this.text = "";
+        this.positionCurseur = 0;
+        this.estVide = function () {
+            return this.text == "";
+        }
+        this.sauvegarder = function (texte, poscur) {
+            if (texte != "" && poscur != 0) {
+                this.text = texte;
+                this.positionCurseur = poscur;
+            }
+        };
+        this.getSauvegarde = function () {
+            var sauvegarde = { Texte: this.text, Position: this.positionCurseur };
+            this.clear();
+            return sauvegarde;
+        }
+        this.clear = function () {
+            this.text = "";
+            this.positionCurseur = 0;
+        }
+
+    }
+    function createInstance() {
+        var singleton = new zeSauvegarde();
+        return singleton;
+    }
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
 
 function compteurChar(contenu) {
     document.getElementById("Char").innerHTML = contenu.length;
@@ -197,9 +251,9 @@ function lignifier(s) {
     return res;
 }
 
-function obtenirTexte(){
+function obtenirTexte() {
     var s = document.getElementById("Editeur").textContent;
-    var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(),s);
+    var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), s);
     return chaineSansCurseur;
 }
 
@@ -229,27 +283,6 @@ function minifier() {
     });
 }
 
-var tabFonctions = (function () {
-    var instance;
-    function ZeCompteur() {
-        this.fonctionReturn = new Array();
-        fonctionReturn[8] = backspace;
-
-    }
-    function createInstance() {
-        var singleton = new ZeCompteur();
-        return singleton;
-    }
-    return {
-        getInstance: function () {
-            if (!instance) {
-                instance = createInstance();
-            }
-            return instance;
-        }
-    };
-})();
-
 function appliquerCouleurs() {
     var Keywords = getCookie("Keyword");
     var Nombres = getCookie("Nombres");
@@ -274,7 +307,7 @@ function setCookie(cname, cvalue, exdays) {
     document.cookie = cname + "=" + cvalue + "; " + expires;
 }
 
-function init(){
+function init() {
     placerCurseurDebut();
     checkCookie();
 }
@@ -321,73 +354,17 @@ function colorierNombres(s, classe) {
     return joindre2TabString(tabNombres, tabNonNombres, nombresEnPremier);
 }
 
-function spanifierSelonCaracteres(s, charDebut, charFin, classe, UneLigne) {
-    var regex;
-
-    //ces regex sont une gracieusete de Mathieu Dumoulin!
-    if (surUneLigne) {
-        regex = new RegExp(caractereDebut + "(.*?)" + caractereFin, 'g');
-    }
-    else {
-        regex = new RegExp(caractereDebut + "((?:.|\\s)*?)" + caractereFin, 'g');
-    }
-    var tabMots = s.split(regex);
-    var tabMotsIsoles = s.match(regex);
-    var doubleBackSlash = new RegExp("\\\\", 'g');
-    caractereDebut = caractereDebut.replace(doubleBackSlash, "");
-    caractereFin = caractereFin.replace(doubleBackSlash, "");
-    for (var i = 1; i < tabMots.length - 1; ++i) {
-        var motEvalue = caractereDebut + tabMots[i] + caractereFin;
-        if (tabMotsIsoles[0] == motEvalue) {
-            tabMots[i] = spanifier(motEvalue, classe);
-            tabMotsIsoles.shift();
-        }
-    }
-    return tabMots.join("");
-}
-function getSelectionHtml() {
-    var html = "";
-
-    if (typeof window.getSelection != "undefined") {
-        var sel = window.getSelection();
-        if (sel.rangeCount) {
-            var container = document.createElement("div");
-            for (var i = 0, len = sel.rangeCount; i < len; ++i) {
-                container.appendChild(sel.getRangeAt(i).cloneContents());
-            }
-            html = container.innerHTML;
-        }
-    } else if (typeof document.selection != "undefined") {
-        if (document.selection.type == "Text") {
-            html = document.selection.createRange().htmlText;
-        }
-    }
-    return html;
-}
-function contextMenu(selection) {
-    var menu = [{
-        name: 'Aide',
-        img: 'aide.png',
-        title: 'aide mot clé',
-        fun: function () {
-            var link = "https://www.processing.org/reference/" + selection + ".html";
-            window.open(link);
-        }
-    }];
-
-    $('div.preformatted').contextMenu(menu);
-}
-
 function searchReplace() {
     var search = document.getElementById("recherche").value;
     var replace = document.getElementById("remplacer").value;
     var texte = document.getElementById("Editeur").textContent;
     // On eleve le curseur
-    texte = replaceString(texte, Curseur.getInstance().getCaractere(), "");
+    var chaineSansCurseur = retirerChar(Curseur.getInstance().getCaractere(), texte);
     // change le texte et vide les box
-    texte = replaceString(texte, new RegExp(search, 'g'), replace);
+    chaineSansCurseur = replaceString(chaineSansCurseur, new RegExp(search, 'g'), replace);
     document.getElementById("recherche").value = "";
     document.getElementById("remplacer").value = "";
     // Re ajoute tout le style
-    peinturer(texte, "Editeur");
+    document.getElementById("Editeur").innerHTML = paint(chaineSansCurseur);
+    appliquerCouleurs();
 }

@@ -3,7 +3,7 @@
 par Francis cote et daren-ken st-laurent
 -->
 <html lang="fr">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,60 +28,63 @@ par Francis cote et daren-ken st-laurent
     <script type="text/javascript" src="JavaScript/jscolor/jscolor.js"></script>
     <link href="Css/contextMenu.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="JavaScript/jscolor/jscolor.js"></script>
-  </head>
+</head>
 
-  <body class="prog" onload="init()">
+<body class="prog" onload="init()">
     <div>
-      <h1>Formateur de texte</h1>
-      <div>
-        <table>
-          <tr>
-            <td>Search&Replace</td>
-            <td>
-              <form name="SeachReplace" action="SearchReplace()" method="get">
-                Search for:
-                <input type="text" name="Mot">
-                Replace by :<input type="text" name="user">
-                <input type="submit" value="Submit">
-              </form>
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div id="Editeur" class="preformatted"><span class="Numerote" /></div>
-      <!--charge le documents avec la premiere ligne deja presente-->
-      <br />
-      <div>
-        <table class="compteur">
-          <tr>
-            <td>Mots : <span id="Mots">0</span></td>
-            <td>Ligne : <span id="Ligne">0</span></td>
-            <td>Colonne :<span id="Colonne"> 0</span></td>
-            <td>Caractères : <span id="Char">0</span></td>
-            <td>Mots-clés<input id="CouleurKeywords" class="color {hash:true}" />
-            <button onclick="changeKeywordsColor()">Appliquer</button></td>
-            <td>Nombre<input id="CouleurNombre" class="color {hash:true}" />
-            <button onclick="changeNombreColor()">Appliquer</button></td>
-          </tr>
-        </table>
-      </div>
-      <br />
-      <input readonly="readonly" id="minificateur" />
-      <button onclick="minifier()">Minifier</button>
+        <h1>Formateur de texte</h1>
+        <div>
+            <table>
+                <tr>
+                    <td>Search&Replace</td>
+                    <td>
+                </tr>
+                <tr>
+                    <td>Search for:
+                        <input type="text" id="recherche">
+                        Replace by :<input type="text" id="remplacer">
+                        <button onclick="searchReplace()">Chercher</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="Editeur" class="preformatted"><span class="Numerote" /></div>
+        <!--charge le documents avec la premiere ligne deja presente-->
+        <br />
+        <div>
+            <table class="compteur">
+                <tr>
+                    <td>Mots : <span id="Mots">0</span></td>
+                    <td>Ligne : <span id="Ligne">0</span></td>
+                    <td>Colonne :<span id="Colonne"> 0</span></td>
+                    <td>Caractères : <span id="Char">0</span></td>
+                    <td>Mots-clés<input id="CouleurKeywords" class="color {hash:true}" />
+                        <button onclick="changeKeywordsColor()">Appliquer</button></td>
+                    <td>Nombre<input id="CouleurNombre" class="color {hash:true}" />
+                        <button onclick="changeNombreColor()">Appliquer</button></td>
+                </tr>
+            </table>
+        </div>
+        <br />
+        <input readonly="readonly" id="minificateur" />
+        <button onclick="minifier()">Minifier</button>
     </div>
     <script>
-      $(function () {
-        var menu = [{
-          name: 'Aide',
-          img: 'aide.png',
-          title: 'aide mot clé',
-          fun: function () {
-              var link = "https://www.processing.org/reference/" + getSelectionHtml() + ".html";
-              window.open(link);
-          }
-        }];
-        $('.preformatted').contextMenu(menu, {triggerOn:'contextmenu'});
-      });
+        $(function () {
+            var selection = getSelectionText();
+            if (selection != null && selection != "") {
+                var menu = [{
+                    name: 'Aide',
+                    img: 'aide.png',
+                    title: 'aide mot clé',
+                    fun: function () {
+                        var link = "https://www.processing.org/reference/" + selection;
+                        window.open(link);
+                    }
+                }];
+                $('.preformatted').contextMenu(menu, { triggerOn: 'contextmenu' });
+            }
+        });
     </script>
-  </body>
+</body>
 </html>
