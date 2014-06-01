@@ -62,6 +62,11 @@ par Francis cote et daren-ken st-laurent
                         <button onclick="changeKeywordsColor()">Appliquer</button></td>
                     <td>Nombre<input id="CouleurNombre" class="color {hash:true}" />
                         <button onclick="changeNombreColor()">Appliquer</button></td>
+                    <td>Ajouter/retirer Mot Clé
+                        <input id="Keyword" type="text" />
+                        <button onclick="keyWordAdd()">Ajouter</button>
+                        <button onclick="keyWordDelete()">Enlever</button>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -69,6 +74,7 @@ par Francis cote et daren-ken st-laurent
         <input readonly="readonly" id="minificateur" />
         <button onclick="minifier()">Minifier</button>
     </div>
+    <div class="prog" id="AffichageMots"> </div>
     <script>
         $(function () {
             var selection = getSelectionText();

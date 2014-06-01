@@ -1,15 +1,85 @@
 // JavaScript source code
 //par Francis cote et daren-ken st-laurent
-function keyWord(mot) {
-    var tableau = ["break", "case", "catch", "continue", "debugger", "default", "delete", "do",
+
+var keyWord = (function () {
+    var instance;
+    function ZeMotCles() {
+        this.tableau = ["break", "case", "catch", "continue", "debugger", "default", "delete", "do",
        "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch",
        "this", "throw", "try", "typeof", "var", "void", "while", "with"];
-    if (trouverDans(mot, tableau) != tableau.length) {
-        return true;
+        this.ajouterKeyword = function (mot) {
+            return this.tableau.push(mot);
+        }
+        this.removeKeyWord = function (mot) {
+            var index = this.tableau.indexOf(mot);
+            if (index != -1) {
+                this.tableau.splice(index,1);
+            }
+        }
+        this.checkMot = function (mot) {
+            if (trouverDans(mot, this.tableau) != this.tableau.length) {
+                return true;
+            }
+            else {
+                return false;
+            };
+        }
+        this.getTabString = function(){
+            return this.tableau.join(";");
+        }
+    }
+    function createInstance() {
+        var singleton = new ZeMotCles();
+        return singleton;
+    }
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
+        }
+    };
+})();
+
+function keyWordAdd(){
+    var mot = document.getElementById("Keyword");
+
+    if (mot.value != "") {
+        if (!keyWord.getInstance().checkMot(mot.value)) {
+            keyWord.getInstance().ajouterKeyword(mot.value);
+            mot.value = "";
+            AfficherMotCles();
+        }
+        else {
+            alert(mot.value + " déjà présent")
+        }
     }
     else {
-        return false;
+        alert("Texte Vide");
     }
+
+}
+
+function keyWordDelete() {
+    var mot = document.getElementById("Keyword");
+    if (mot.value != "") {
+        if (keyWord.getInstance().checkMot(mot.value)) {
+            keyWord.getInstance().removeKeyWord(mot.value);
+            mot.value = "";
+            AfficherMotCles();
+        }
+        else {
+            alert(mot.value + " non présent")
+        }
+    }
+    else {
+        alert("Texte Vide");
+    }
+}
+
+function AfficherMotCles(){
+    document.getElementById("AffichageMots").innerHTML = keyWord.getInstance().getTabString();
 }
 
 function trouverDans(val, tab) {
@@ -57,7 +127,7 @@ function formater(s) {
             prochain = trouverSi(s, pos, isSpace);
             temp = subStr(s, pos, prochain);
             Compteur.getInstance().ajouterMot(); // Compteur de mots
-            if (keyWord(retirerChar(curseur, temp))) {
+            if (keyWord.getInstance().checkMot(retirerChar(curseur, temp))) {
                 temp = spanifier(temp, "keyword"); // Peinture le mot clé
             }
             pos = prochain;

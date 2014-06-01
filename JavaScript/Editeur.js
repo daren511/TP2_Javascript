@@ -290,7 +290,7 @@ function appliquerCouleurs() {
     $(".Nombres").css("color", Nombres);
 }
 
-function changeColor() {
+function Color() {
     var colorKeyword = document.getElementById("CouleurKeywords").value;
     var colorNombres = document.getElementById("CouleurNombre").value;
     $(".keyword").css("color", colorKeyword);
@@ -310,13 +310,19 @@ function setCookie(cname, cvalue, exdays) {
 function init() {
     placerCurseurDebut();
     checkCookie();
+    AfficherMotCles();
 }
 
 function checkCookie() {
     var Keyword = getCookie("Keyword");
     if (Keyword != "") {
         $(".Keyword").css("color", Keyword);
-        document.getElementById("Couleur").value = color;
+        document.getElementById("CouleurKeywords").value = Keyword;
+    }
+    var Nombres = getCookie("Nombres");
+    if (Keyword != "") {
+        $(".Nombres").css("color", Keyword);
+        document.getElementById("CouleurNombre").value = Keyword;
     }
 }
 
